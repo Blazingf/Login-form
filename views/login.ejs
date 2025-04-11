@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login Page</title>
+  <style>
+    body {
+      background: linear-gradient(to right, #74ebd5, #acb6e5);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .login-container {
+      background-color: #ffffff;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 300px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 1rem;
+    }
+
+    .input-group {
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: 500;
+    }
+
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.6rem;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .output-message {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    .error {
+      color: red;
+    }
+
+    .success {
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Login 😊</h2>
+
+    <form id="loginForm" method="POST" action="/login">
+        <form id="loginForm">
+            <div class="input-group">
+              <label for="username">Email</label>
+              <input type="text" id="username" name="username" required />
+            </div>
+          
+            <div class="input-group">
+              <label for="password">Password</label>
+              <div style="position: relative;">
+                <input type="password" id="password" name="password" required />
+                <span id="togglePassword" style="position:absolute; top:8px; right:10px; cursor:pointer;">👁️</span>
+              </div>
+              <div id="strengthMessage" style="margin-top: 0.3rem; font-size: 0.9rem;"></div>
+              <div id="strengthBar" style="height: 5px; background-color: lightgray; border-radius: 5px; margin-top: 5px;"></div>
+            </div>
+          
+            <div id="outputMessage" class="output-message"></div>
+          
+            <button type="submit">Login 🔐</button>
+          </form>
+          
+    </form>
+  </div>
+
+  <!-- jQuery for potential future AJAX (optional) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <script>
+    // Toggle password visibility
+    document.getElementById("togglePassword").addEventListener("click", function () {
+      const passwordInput = document.getElementById("password");
+      const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+      passwordInput.setAttribute("type", type);
+      this.textContent = type === "password" ? "👁️" : "🙈";
+    });
+
+    // Password strength meter
+    document.getElementById("password").addEventListener("input", function () {
+      const password = this.value;
+      const strengthMessage = document.getElementById("strengthMessage");
+      const strengthBar = document.getElementById("strengthBar");
+
+      let strength = 0;
+      if (password.length >= 8) strength++;
+      if (/[A-Z]/.test(password)) strength++;
+      if (/[a-z]/.test(password)) strength++;
+      if (/[0-9]/.test(password)) strength++;
+      if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+      if (password.length === 0) {
+        strengthBar.style.width = "0%";
+        strengthBar.style.backgroundColor = "lightgray";
+        strengthMessage.textContent = "";
+        return;
+      }
+
+      let barColor = "red", message = "Weak 💔", width = "30%";
+      if (strength >= 3) {
+        barColor = "orange";
+        message = "Medium ⚠️";
+        width = "60%";
+      }
+      if (strength >= 4) {
+        barColor = "green";
+        message = "Strong 💪";
+        width = "100%";
+      }
+
+      strengthBar.style.width = width;
+      strengthBar.style.backgroundColor = barColor;
+      strengthMessage.textContent = message;
+    });
+
+    // Email validation on blur
+    document.getElementById("username").addEventListener("blur", function () {
+      const email = this.value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        alert("❌ Please enter a valid email address.");
+        this.focus();
+      }
+    });
+
+    // Prevent form submit if email is invalid
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      const email = document.getElementById("username").value.trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        alert("🚫 Invalid email format. Please fix before submitting.");
+        e.preventDefault(); // block form submit
+      }
+    });
+  </script>
+</body>
+</html>
